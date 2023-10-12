@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">To the watering hole</string>
+    <string name="search">Show nearest well</string>
 </resources>
