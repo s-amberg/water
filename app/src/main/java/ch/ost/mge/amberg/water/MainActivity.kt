@@ -1,17 +1,17 @@
 package ch.ost.mge.amberg.water
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import ch.ost.mge.amberg.water.ui.theme.ToTheWateringHoleTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,42 +45,33 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-fun loadWater() {
 
 }
 
+
+fun loadWater(context: Context) {
+    val intent = Intent(context, PointsActivity::class.java)
+    startActivity(context, intent, null)
+}
 
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
     Layout(
         modifier
     ){padding ->
-        SearchButton()
+        SearchButton(Modifier.padding(padding))
     }
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Layout(modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text(stringResource(R.string.app_name))
-            }
-        ) }
-    ) {padding -> content(padding) }
+private fun Layout(modifier: Modifier = Modifier, content: @Composable (PaddingValues) -> Unit) {
+    Layout(modifier, { Text(stringResource(R.string.app_name)) }, null, content)
 }
 
 @Composable
 fun SearchButton(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -87,7 +80,7 @@ fun SearchButton(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         FilledTonalButton(
-            onClick = { loadWater() },
+            onClick = { loadWater(context) },
             shape = CircleShape,
             border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
             modifier = Modifier
@@ -97,7 +90,7 @@ fun SearchButton(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(R.string.search),
-                modifier = modifier,
+                modifier = Modifier,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.labelLarge
             )
