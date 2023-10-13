@@ -56,6 +56,7 @@ fun loadWater(context: Context) {
 
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
+    //TOdo: add background image (water)
     Layout(
         modifier
     ){padding ->

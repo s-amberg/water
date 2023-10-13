@@ -1,5 +1,8 @@
 package ch.ost.mge.amberg.water
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -38,9 +41,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import ch.ost.mge.amberg.water.models.Point
 import ch.ost.mge.amberg.water.ui.theme.ToTheWateringHoleTheme
 
@@ -60,6 +65,13 @@ class PointsActivity : ComponentActivity() {
         }
     }
 
+    private fun directionFromCurrentMap(destinationLatitude: String, destinationLongitude: String) {
+        // Create a Uri from an intent string. Open map using intent to show direction from current location (latitude, longitude) to specific location (latitude, longitude)
+        val mapUri = Uri.parse("https://maps.google.com/maps?daddr=$destinationLatitude,$destinationLongitude")
+        val intent = Intent(Intent.ACTION_VIEW, mapUri)
+        startActivity(intent)
+    }
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -75,7 +87,7 @@ class PointsActivity : ComponentActivity() {
             },
             trailingContent = {
                 FilledTonalIconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { directionFromCurrentMap(point.x.toString(), point.y.toString()) },
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.secondary
