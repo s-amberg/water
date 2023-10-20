@@ -1,3 +1,3 @@
 package ch.ost.mge.amberg.water.models
 
-data class Point(val x: Int, val y: Int)
+open class Point(val long: Double, val lat: Double)
