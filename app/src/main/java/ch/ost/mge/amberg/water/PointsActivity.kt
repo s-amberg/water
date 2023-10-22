@@ -6,11 +6,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -28,8 +32,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,12 +48,13 @@ class PointsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val radiusKm = intent.getIntExtra("radius", 5)
 
         setContent {
             ToTheWateringHoleTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Wells()
+                    Wells(radiusKm, null)
                 }
             }
         }
@@ -62,7 +67,6 @@ class PointsActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun PointView(point: OSMNode) {
@@ -71,7 +75,7 @@ class PointsActivity : ComponentActivity() {
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 headlineColor = MaterialTheme.colorScheme.onSecondaryContainer),
             headlineText = { Text(text = point.title()) },
-            supportingText = { Text(text = point.body()) },
+            supportingText = { Text(text = point.body() + " ${point.long} | ${point.lat}") },
             trailingContent = {
                 FilledTonalIconButton(
                     onClick = { directionFromCurrentMap(point.long.toString(), point.lat.toString()) },
@@ -79,7 +83,6 @@ class PointsActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.secondary
                     )
-
                 ) {
                     Icon(
                         Icons.Filled.LocationOn,
@@ -91,14 +94,18 @@ class PointsActivity : ComponentActivity() {
     }
 
     @Composable
-    fun Wells(defaultPoints: List<OSMNode> = listOf<OSMNode>()) {
+    fun Wells(radius: Int, defaultPoints: List<OSMNode>?) {
 
-        val points = pointService.getPoints().subscribeAsState(defaultPoints)
-        val pointState by remember(points){ points }
+        val points by pointService
+                .getPoints(radius.toFloat())
+                .onErrorReturn{listOf()}
+                .subscribeAsState(listOf())
 
-            Layout(
-                modifier = Modifier.fillMaxWidth()
-            ) {padding ->
+        Layout(
+            modifier = Modifier.fillMaxWidth()
+        ) {padding ->
+
+            if(points.isNotEmpty())
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -106,11 +113,19 @@ class PointsActivity : ComponentActivity() {
                         .offset(y = 5.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    items(pointState) { point ->
+                    items(points) { point ->
                         PointView(point)
                     }
                 }
-            }
+            else
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ){ Text(text = stringResource(id = R.string.list_empty)) }
+        }
     }
 
     @Preview(showBackground = true)
@@ -120,7 +135,7 @@ class PointsActivity : ComponentActivity() {
         ToTheWateringHoleTheme {
             // A surface container using the 'background' color from the theme
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                Wells((0..10).map{
+                Wells(5, (0L..10L).map{
                     OSMNode("node", it, it *2.0, it.toDouble(), "",
                         OSMTag("", drinking_water = true, name = "point${it}", amenity = "drinking_water", man_made = null))
                 })

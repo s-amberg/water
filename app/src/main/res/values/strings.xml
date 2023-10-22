@@ -2,4 +2,6 @@
     <string name="app_name">To the watering hole</string>
     <string name="search">Find the nearest well</string>
     <string name="search_title">Nearest wells</string>
+    <string name="km">km</string>
+    <string name="list_empty">No result found</string>
 </resources>

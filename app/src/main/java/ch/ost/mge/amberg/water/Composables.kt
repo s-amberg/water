@@ -24,7 +24,7 @@ fun Layout(
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+//                    titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 title = {
                     title()

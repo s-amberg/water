@@ -6,7 +6,7 @@ class OSMResponse (val elements: List<OSMNode>){
 
 class OSMNode(
     val type: String,
-    val id: Int,
+    val id: Long,
     lat: Double,
     long: Double,
     val timestamp: String,
@@ -49,15 +49,19 @@ class OSMTag (
             if (bottle == true) "works with bottles" else null,
             if (drinking_water == true) "drinking water" else null,
             if (man_made == "water_tap") "water tap" else null,
+            if (man_made == "water_well") "well" else null,
             if (indoor == true) "indoor" else null
         ).joinToString(", ")
     }
 
     fun isWell(): Boolean {
-        return amenityIsWell() || drinking_water == true
+        return amenityIsWell() || manMadeIsWell() || drinking_water == true
     }
 
     private fun amenityIsWell(): Boolean {
         return amenity != null && listOf("drinking_water", "fountain").contains(amenity)
+    }
+    private fun manMadeIsWell(): Boolean {
+        return man_made != null && listOf("water_well", "water_tap").contains(man_made)
     }
 }
