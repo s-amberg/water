@@ -8,16 +8,16 @@ class OSMNode(
     val type: String,
     val id: Long,
     lat: Double,
-    long: Double,
+    lon: Double,
     val timestamp: String,
     val tags: OSMTag?
-): Point(long, lat) {
+): Point(lon, lat) {
     fun isWell(): Boolean {
         return type == "node" && tags != null && tags.isWell()
     }
 
     override fun toString(): String {
-        return "$lat $long $tags"
+        return "$lat $lon $tags"
     }
 
     fun title(): String {
@@ -55,7 +55,7 @@ class OSMTag (
     }
 
     fun isWell(): Boolean {
-        return amenityIsWell() || manMadeIsWell() || drinking_water == true
+        return amenityIsWell() || ( manMadeIsWell() && drinking_water == true )
     }
 
     private fun amenityIsWell(): Boolean {

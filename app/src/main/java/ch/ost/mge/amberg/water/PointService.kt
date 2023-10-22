@@ -2,7 +2,6 @@ package ch.ost.mge.amberg.water
 import ch.ost.mge.amberg.water.models.OSMNode
 import ch.ost.mge.amberg.water.models.OSMResponse
 import ch.ost.mge.amberg.water.models.Point
-import io.reactivex.rxjava3.core.Observable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,24 +21,21 @@ class PointService(private val api: RestAPI = RestAPI()) {
        return response.elements.filter { it.isWell() }
     }
 
-    fun getPoints(radiusKm: Float = 5F, lat: Float = 8.8F, long: Float = 47.23F): Observable<List<OSMNode>> {
-        return Observable.create { emitter ->
+    fun getPoints(radiusKm: Float = 5F, onSuccess: (points:List<OSMNode>)->Unit, onError: (t:Throwable)->Unit, lat: Float = 8.8F, long: Float = 47.23F): Unit {
 
             getPointsFromAPI(radiusKm, lat, long).enqueue(object : Callback<OSMResponse> {
                 override fun onResponse(call: Call<OSMResponse>, response: Response<OSMResponse>) {
                     val body = response.body();
                     if(body != null) {
                         val points = mapOSMReponse(response.body()!!)
-                        emitter.onNext(points)
-                        emitter.onComplete()
+                        onSuccess(points)
                     }
-                    else emitter.onError(Throwable(response.message()))
+                    else onError(Throwable(response.message()))
                 }
                 override fun onFailure(call: Call<OSMResponse>, t: Throwable) {
-                    emitter.onError(t)
+                    onError(t)
                 }
             })
-        }
     }
 
 
@@ -48,7 +44,7 @@ class PointService(private val api: RestAPI = RestAPI()) {
 
 fun distance(point1: Point, point2: Point): Double {
     val latDifference = point2.lat - point1.lat
-    val longDifference = point2.long - point1.long
+    val longDifference = point2.lon - point1.lon
 
     return Math.sqrt(Math.pow(latDifference, 2.0) + Math.pow(longDifference, 2.0))
 }

@@ -8,13 +8,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -32,7 +29,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rxjava3.subscribeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -75,10 +74,10 @@ class PointsActivity : ComponentActivity() {
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 headlineColor = MaterialTheme.colorScheme.onSecondaryContainer),
             headlineText = { Text(text = point.title()) },
-            supportingText = { Text(text = point.body() + " ${point.long} | ${point.lat}") },
+            supportingText = { Text(text = point.body() + " ${point.lon} | ${point.lat}") },
             trailingContent = {
                 FilledTonalIconButton(
-                    onClick = { directionFromCurrentMap(point.long.toString(), point.lat.toString()) },
+                    onClick = { directionFromCurrentMap(point.lon.toString(), point.lat.toString()) },
                     colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.secondary
@@ -92,31 +91,38 @@ class PointsActivity : ComponentActivity() {
             }
         )
     }
+    
+    @Composable
+    fun PointList(points: List<OSMNode>, padding: PaddingValues) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(padding)
+                .offset(y = 5.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(points) { point ->
+                PointView(point)
+            }
+        }
+    }
 
     @Composable
     fun Wells(radius: Int, defaultPoints: List<OSMNode>?) {
 
-        val points by pointService
-                .getPoints(radius.toFloat())
-                .onErrorReturn{listOf()}
-                .subscribeAsState(listOf())
+        var points by remember{mutableStateOf(defaultPoints?:listOf<OSMNode>())}
+
+        val defaultError = stringResource(id = R.string.list_empty)
+        var error by remember{ mutableStateOf(defaultError) }
+
+        pointService.getPoints(radius.toFloat(), { points = it }, {error = it.message ?: defaultError})
 
         Layout(
             modifier = Modifier.fillMaxWidth()
         ) {padding ->
 
             if(points.isNotEmpty())
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(padding)
-                        .offset(y = 5.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(points) { point ->
-                        PointView(point)
-                    }
-                }
+                PointList(points, padding)
             else
                 Column(
                     modifier = Modifier
