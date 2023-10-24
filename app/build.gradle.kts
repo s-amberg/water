@@ -58,6 +58,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     testImplementation("junit:junit:4.13.2")
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
     implementation("androidx.compose.runtime:runtime-rxjava3:1.5.3")

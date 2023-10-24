@@ -3,5 +3,9 @@
     <string name="search">Find the nearest well</string>
     <string name="search_title">Nearest wells</string>
     <string name="km">km</string>
+    <string name="overpass">Swiss</string>
+    <string name="osm">International</string>
     <string name="list_empty">No result found</string>
+    <string name="request_permission">Access Location Permissions</string>
+    <string name="permission_rationale">The location permissions are needed to determine the search area for wells</string>
 </resources>

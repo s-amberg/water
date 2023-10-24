@@ -1,52 +1,55 @@
 package ch.ost.mge.amberg.water
+import ch.ost.mge.amberg.water.dal.RestAPI
+import ch.ost.mge.amberg.water.models.DEFAULT_POINT
 import ch.ost.mge.amberg.water.models.OSMNode
 import ch.ost.mge.amberg.water.models.OSMResponse
 import ch.ost.mge.amberg.water.models.Point
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class PointService(private val api: RestAPI = RestAPI()) {
 
-    private fun getPointsFromAPI(radiusKm: Float, lat: Float, long: Float): Call<OSMResponse> {
-        val left = long - kmToLongitude(radiusKm)
-        val bottom = lat - kmToLatitude(radiusKm)
-        val right = long + kmToLongitude(radiusKm)
-        val top = lat + kmToLatitude(radiusKm)
+    private fun getPointsFromAPI(radiusKm: Float, useOverpass: Boolean, location: Point): Call<OSMResponse> {
+        val left = location.lat - kmToLatitude(radiusKm)
+        val bottom = location.lon - kmToLongitude(radiusKm)
+        val right = location.lat + kmToLatitude(radiusKm)
+        val top = location.lon + kmToLongitude(radiusKm)
 
-        return api.getPoints(left.toString(), bottom.toString(), right.toString(), top.toString())
+        return  if(useOverpass) api.getOverpassPoints(left.toString(), bottom.toString(), right.toString(), top.toString())
+                else api.getPoints(left.toString(), bottom.toString(), right.toString(), top.toString())
     }
 
-    private fun mapOSMReponse(response: OSMResponse): List<OSMNode> {
-       return response.elements.filter { it.isWell() }
+    private fun mapOSMResponse(response: OSMResponse, location: Point): List<OSMNode> {
+       return response.elements.mapNotNull { it.toOSMNode(location) }.filter { it.isWell() }
     }
 
-    fun getPoints(radiusKm: Float = 5F, onSuccess: (points:List<OSMNode>)->Unit, onError: (t:Throwable)->Unit, lat: Float = 8.8F, long: Float = 47.23F): Unit {
+    fun getPoints(
+        radiusKm: Float = 5F,
+        location: Point,
+        useOverpass: Boolean,
+        onSuccess: (points:List<OSMNode>)->Unit,
+        onError: (t:Throwable)->Unit): Unit {
 
-            getPointsFromAPI(radiusKm, lat, long).enqueue(object : Callback<OSMResponse> {
-                override fun onResponse(call: Call<OSMResponse>, response: Response<OSMResponse>) {
-                    val body = response.body();
-                    if(body != null) {
-                        val points = mapOSMReponse(response.body()!!)
-                        onSuccess(points)
-                    }
-                    else onError(Throwable(response.message()))
+        getPointsFromAPI(radiusKm, useOverpass, location).enqueue(object : Callback<OSMResponse> {
+            override fun onResponse(call: Call<OSMResponse>, response: Response<OSMResponse>) {
+                val body = response.body();
+                if(body != null) {
+                    val points = mapOSMResponse(body, location).sortedBy { it.distance }
+                    onSuccess(points)
                 }
-                override fun onFailure(call: Call<OSMResponse>, t: Throwable) {
-                    onError(t)
-                }
-            })
+                else onError(Throwable(response.message()))
+            }
+            override fun onFailure(call: Call<OSMResponse>, t: Throwable) {
+                onError(t)
+            }
+        })
     }
 
 
 
-}
-
-fun distance(point1: Point, point2: Point): Double {
-    val latDifference = point2.lat - point1.lat
-    val longDifference = point2.lon - point1.lon
-
-    return Math.sqrt(Math.pow(latDifference, 2.0) + Math.pow(longDifference, 2.0))
 }
 
 fun kmToLongitude(kms: Float): Float {

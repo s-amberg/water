@@ -1,4 +1,4 @@
-package ch.ost.mge.amberg.water
+package ch.ost.mge.amberg.water.dal
 import ch.ost.mge.amberg.water.models.OSMResponse
 import retrofit2.Call
 import retrofit2.http.GET
@@ -16,4 +16,5 @@ interface Api {
     @Headers("Accept: application/json")
     fun getById(@Path("id")id: String)
             : Call<OSMResponse>;
+
 }
