@@ -31,7 +31,7 @@ class OSMRawTag(    val type: String?,
                     val fountain: String?,
                     val access: String?,
                     ) {
-    fun isYes(strBoolean: String?): Boolean? {
+    private fun isYes(strBoolean: String?): Boolean? {
         return  if(strBoolean != null) strBoolean == "yes"
         else null
     }
@@ -58,11 +58,11 @@ class OSMNode(
     }
 
     override fun toString(): String {
-        return "$lat $lon $tags"
+        return "$lat $lon ${title()} ${body()}"
     }
 
     fun title(): String {
-        return if (tags != null && tags.name != null) tags.name else "Unnamed Point"
+        return tags?.title() ?: "Unnamed Point"
     }
 
     fun body(): String {
@@ -90,13 +90,19 @@ class OSMTag (
         return name + description()
     }
 
+    fun title(): String? {
+        return name ?:
+        if (fountain!=null) "fountain"
+        else if (amenity == "toilets") amenity
+        else manMadeTitle()
+    }
+
     fun description(): String {
         return listOfNotNull(
             if (bottle == true) "works with bottles" else null,
             if (drinking_water == true) "drinking water" else null,
-            if (amenity == "toilets") "toilets${fee ?: ""}" else null,
-            if (man_made == "water_tap") "water tap" else null,
-            if (man_made == "water_well") "well" else null,
+            if (amenity == "toilets") "toilets ${fee ?: ""}" else null,
+            if (title() != man_made) manMadeTitle() else null,
             if (indoor == true) "indoor" else null,
             if (natural == "spring") "natural spring" else null,
             if (fountain != null) "fountain: $fountain" else null,
@@ -113,5 +119,8 @@ class OSMTag (
     }
     private fun manMadeIsWell(): Boolean {
         return man_made != null && listOf("water_well", "water_tap").contains(man_made)
+    }
+    private fun manMadeTitle(): String? {
+        return if (man_made == "water_tap") "water tap" else if (man_made == "water_well") "well" else null
     }
 }
