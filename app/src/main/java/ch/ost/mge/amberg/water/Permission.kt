@@ -60,7 +60,6 @@ fun PermissionRequesterView(rationaleTitle: String, rationale: String, content: 
         )
     }
 
-
     fun decideCurrentPermissionStatus(locationPermissionsGranted: Boolean,
                                       shouldShowPermissionRationale: Boolean): String {
         return if (locationPermissionsGranted) "Granted"

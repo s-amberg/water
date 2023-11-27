@@ -70,9 +70,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // TODO
-    // https://www.freecodecamp.org/news/requesting-location-permissions-in-jetpack-compose/
-
 }
 
 
