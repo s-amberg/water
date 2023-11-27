@@ -19,14 +19,10 @@ Eine Geolokalisierungs-App, die anhand Ihres Standorts und öffentlicher Datenba
    - Lazy lists
 
 ## Screenshots
-![App Homescreen standard](/screenshots/homescreen_standard.png)
-![App Homescreen light](/screenshots/homescreen_light.png)
-![App Homescreen adaptive colors](/screenshots/homescreen_adaptive.png)
-![App Punkte anzeigen](/screenshots/points.png)
-<img src="/screenshots/homescreen_standard.png" width="50%">
-<img src="/screenshots/homescreen_light.png" width="50%">
-<img src="/screenshots/homescreen_adaptive.png" width="50%">
-<img src="/screenshots/points.png" width="50%">
+![App Homescreen standard](/screenshots/homescreen_standard.png) ![App Homescreen light](/screenshots/homescreen_light.png)
+![App Homescreen adaptive colors](/screenshots/homescreen_adaptive.png) ![App Punkte anzeigen](/screenshots/points.png)
+<img src="/screenshots/homescreen_standard.png" height="300px"> <img src="/screenshots/homescreen_light.png" height="300px">
+<img src="/screenshots/homescreen_adaptive.png" height="300px"> <img src="/screenshots/points.png" height="300px">
 
 
 
