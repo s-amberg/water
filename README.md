@@ -21,6 +21,7 @@ Eine Geolokalisierungs-App, die anhand Ihres Standorts und öffentlicher Datenba
 ## Screenshots
 ![App Homescreen standard](/screenshots/homescreen_standard.png)
 ![App Homescreen light](/screenshots/homescreen_light.png)
+<img src="/screenshots/homescreen_light.png" width="50%">
 ![App Homescreen adaptive colors](/screenshots/homescreen_adaptive.png)
 ![App Punkte anzeigen](/screenshots/points.png)
 
