@@ -19,14 +19,14 @@ Eine Geolokalisierungs-App, die anhand Ihres Standorts und öffentlicher Datenba
    - Lazy lists
 
 ## Screenshots
-Dark Homescreen            |  Dark List 
-:-------------------------:|:-------------------------:
-![App Homescreen standard](/screenshots/homescreen_standard.png)|![App Punkte anzeigen](/screenshots/points.png)
+|                         Dark Homescreen                          |                    Dark List                    |
+|:----------------------------------------------------------------:|:-----------------------------------------------:|
+| ![App Homescreen standard](/screenshots/homescreen_standard.png) | ![App Punkte anzeigen](/screenshots/points.png) |
 
-Light Homescreen            |  Adaptive Color
-:-------------------------:|:-------------------------:
-![App Homescreen light](/screenshots/homescreen_light.png)|![App Homescreen adaptive colors](/screenshots/homescreen_adaptive.png)
-
+|                            Light Homescreen                             |                         Light List                          |
+|:-----------------------------------------------------------------------:|:-----------------------------------------------------------:|
+|       ![App Homescreen light](/screenshots/homescreen_light.png)        | ![App Punkte anzeigen light](/screenshots/points_light.png) |
+| ![App Homescreen adaptive colors](/screenshots/homescreen_adaptive.png) |                                                             |
 
 ## [Quelle Bilder](/app/src/main/res/drawable)
 Background [Freepik](https://de.freepik.com/vektoren-kostenlos/kochendes-wasser-abstrakter-hintergrund-mit-luftblasen-auf-fluessiger-oberflaeche_9557343.htm)
